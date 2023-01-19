@@ -1,0 +1,46 @@
+--[[
+
+   For anyone interested, the current IDs are:
+
+   1: Standard user
+   2: Premium gamepass owner
+   3: Developer
+   4: Admin
+   5: Moderator
+   6: Contributor
+
+   -1: Host (Owner, probably. Perms are above everything else)
+
+   You can find them in the "TagService" module if you think they've become inaccurate in future updates.
+
+]]
+
+local players = game:GetService("Players");
+local localPlayer = players.LocalPlayer;
+
+local function checkIsStaff(plr) -- Tags aren't set immediately, it's usually 4 or 5 seconds after they join.
+   local attr;
+   while true do
+       attr = plr:GetAttribute("_tag");
+       if attr ~= nil then
+           break;
+       end
+       task.wait(0.25);
+   end
+   if attr < 0 or attr > 2 then
+       localPlayer:Kick("An Admin is in your game ;)");
+   end
+end
+
+do
+   local plrs = players:GetPlayers();
+   for i = 1, #plrs do
+       local v = plrs[i];
+       if v ~= localPlayer then
+           task.spawn(checkIsStaff, v);
+       end
+   end
+end
+
+game.Players.PlayerAdded:Connect(checkIsStaff);
+print("Anti Ban EXECUTED")
